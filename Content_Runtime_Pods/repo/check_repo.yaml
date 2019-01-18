@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: content-pod-repo
+  labels:
+    app: repo_app
+spec:
+  containers:
+    - name: server-c-1
+      image: suneha/my-content-ubserver:latest
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: nfsvol
+          mountPath: /var/nfsshare
+      securityContext:
+         privileged: true
+      command: [ "/bin/bash" ]
+      args: [ "/var/nfsshare/install_apache.sh" ]
+  volumes:
+    - name: nfsvol
+      persistentVolumeClaim:
+        claimName: nfs-pvc

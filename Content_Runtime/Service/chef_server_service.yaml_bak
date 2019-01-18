@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chef-server
+  labels:
+    app: chef-server-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8170
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: chef
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chef-server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chef
+  template:
+    metadata:
+      labels:
+        app: chef
+    spec:
+      containers:
+        - name: server-c-1
+          image: suneha/my-content-ubserver:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: nfsvol
+              mountPath: /var/nfsshare
+          securityContext:
+             privileged: true
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "cp /var/nfsshare/install_server.sh /root; /var/nfsshare/install_server.sh; while true; do sleep 30; done;" ]
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: nfsvol
+          persistentVolumeClaim:
+            claimName: nfs-pvc

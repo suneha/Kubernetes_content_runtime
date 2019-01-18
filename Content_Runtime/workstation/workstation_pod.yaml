@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: content-pod-2
+  labels:
+    app: workstation_app
+spec:
+  containers:
+    - name: workstation-container
+      image: suneha/my-content-ubserver:latest
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: nfsvol
+          mountPath: /var/nfsshare
+      command: [ "/bin/bash" ]
+      args: [ "/var/nfsshare/chefdk_install.sh" ]
+  imagePullSecrets:
+    - name: regcred
+  volumes:
+    - name: nfsvol
+      persistentVolumeClaim:
+        claimName: nfs-pvc

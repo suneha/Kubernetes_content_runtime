@@ -1,0 +1,17 @@
+iapiVersion: v1
+kind: Pod
+metadata:
+  name: repo
+  labels:
+    app: repo
+spec:
+  containers:
+    - name: repo
+      image: suneha/my-repo
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 80
+      securityContext:
+         privileged: true
+      command: [ "/bin/bash"]
+
